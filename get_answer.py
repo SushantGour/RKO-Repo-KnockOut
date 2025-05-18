@@ -18,7 +18,7 @@ from sentence_transformers import SentenceTransformer
 def get_answer(query : str):
     print("Retrieving....")
 
-    llm = ChatOllama(model='mistral', temperature=0)
+    llm = ChatOllama(model='mistral', temperature=0, base_url=os.getenv("OLLAMA_API_URL"))
 
     # Load the embedding model
     model = SentenceTransformer('sentence-transformers/all-roberta-large-v1')  # model with same no. of
