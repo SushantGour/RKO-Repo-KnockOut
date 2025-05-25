@@ -119,7 +119,7 @@ def batch_upload(docs, embeddings, batch_size=100):
             print(f"❌ Error uploading batch {i // batch_size + 1}: {e}")
             batch_number += 1
 
-def build_knowledgebase(url : str):
+def build_knowledgebase(url : str, branch : str = None):
     print("Building knowledgebase...")
 
     # Load the embedding model
@@ -150,9 +150,9 @@ def build_knowledgebase(url : str):
     # ✅ Check if repo already exists in knowledgebase
     try:
         existing = vectorstore.similarity_search(
-            query="dummy query",  # required but irrelevant since we filter by metadata
+            query="dummy query",
             k=1,
-            filter={"repo_url":url}
+            filter={"repo_url": url, "branch": branch}
         )
         if existing:
             print("🔁 Repo already exists in vector DB")
@@ -165,7 +165,7 @@ def build_knowledgebase(url : str):
     # Clone repo to temp dir
     temp_dir = tempfile.mkdtemp()
     print(f"Cloning {url} into {temp_dir} ...")
-    Repo.clone_from(url, temp_dir)
+    Repo.clone_from(url, temp_dir, branch=branch)
 
     print("Successfully cloned repository")
 
@@ -187,7 +187,7 @@ def build_knowledgebase(url : str):
             for snippet in snippets:
                 for chunk in chunk_snippet(snippet):
                     doc = Document(page_content=chunk,
-                    metadata={"file_path": file_path, "repo_url": url})  # Add repo URL as metadata
+                                   metadata={"file_path": file_path, "repo_url": url, "branch": branch}) # Add repo URL and branch as metadata
                     if not is_too_large(doc):
                         documents.append(doc)
                     else:

@@ -33,9 +33,11 @@ if __name__ == '__main__':
     # Stage: Input
     if st.session_state.stage == "input":
         repo_url = st.text_input("Enter GitHub Repo URL")
+        branch_name = st.text_input("Enter branch")
 
-        if st.button("Run") and repo_url:
+        if st.button("Run") and repo_url and branch_name:
             st.session_state.repo_url = repo_url
+            st.session_state.branch_name = branch_name
             st.session_state.stage = "processing"
             st.rerun()
 
@@ -43,7 +45,7 @@ if __name__ == '__main__':
     elif st.session_state.stage == "processing":
         if not st.session_state.processed:
             st.info("🔄 Fetching repo and building knowledge base...")
-            result = build_knowledgebase(st.session_state.repo_url)
+            result = build_knowledgebase(st.session_state.repo_url, st.session_state.branch_name)
 
             if result == "already_exists":
                 st.session_state.repo_exists = True
