@@ -50,6 +50,17 @@ def get_answer(query : str):
     vectorstore = PineconeVectorStore(index_name=os.getenv("INDEX_NAME"), embedding=embeddings)
 
     retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
+
+    # Set a clear and courteous context-only instruction
+    retrieval_qa_chat_prompt.messages[0].prompt.template = (
+            "You are a helpful assistant. Please answer the question using only the information provided in the context below, "
+            "which has been retrieved from a trusted vector database. Do not rely on your own pretraining knowledge, "
+            "and avoid making assumptions or generating information that isn't supported by the context. "
+            "If the context does not contain enough information to answer the question, respond with: "
+            "'I'm sorry, but based on the provided context, I don't have enough information to answer that question.'\n\n"
+            + retrieval_qa_chat_prompt.messages[0].prompt.template
+    )
+
     combine_docs_chain = create_stuff_documents_chain(llm, retrieval_qa_chat_prompt)
     retrieval_chain = create_retrieval_chain(retriever=vectorstore.as_retriever(),
                                              combine_docs_chain=combine_docs_chain)
