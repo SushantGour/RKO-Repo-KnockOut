@@ -3,7 +3,6 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-from langchain_core.prompts import PromptTemplate
 from langchain_ollama import ChatOllama
 from langchain_pinecone import PineconeVectorStore
 
@@ -14,11 +13,20 @@ from langchain.chains.retrieval import create_retrieval_chain
 from langchain.embeddings.base import Embeddings
 from sentence_transformers import SentenceTransformer
 
+from langchain_google_genai import ChatGoogleGenerativeAI
+
 
 def get_answer(query : str):
     print("Retrieving....")
 
-    llm = ChatOllama(model='mistral', temperature=0, base_url="https://eab2-2405-201-401b-9051-809b-e9b7-78c0-9518.ngrok-free.app")
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-2.0-flash",
+        temperature=0,
+        max_tokens=None,
+        timeout=None,
+        max_retries=2,
+        # other params...
+    )
 
     # Load the embedding model
     model = SentenceTransformer('sentence-transformers/all-roberta-large-v1')  # model with same no. of

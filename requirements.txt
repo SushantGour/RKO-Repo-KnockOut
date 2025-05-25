@@ -14,3 +14,4 @@ tree-sitter-javascript
 tree-sitter-cpp
 tree-sitter-go
 tree-sitter-rust
+langchain-google-genai
